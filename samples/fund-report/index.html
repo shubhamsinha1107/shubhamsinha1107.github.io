@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Sample Fund Investor Report</title>
+<meta name="description" content="An illustrative quarterly investor report and portfolio-monitoring page for a Category II AIF, generated automatically. Synthetic data, by Shubham Sinha.">
+<style>
+:root{--bg:#f6f7f9;--page:#fff;--border:#e3e6ea;--text:#141a22;--muted:#5b6573;--faint:#8a93a0;--accent:#3b5bdb;--accent-soft:#dbe4ff;--track:#eef0f3;--good:#2b8a3e;--warn:#b35c00;--crit:#c92a2a;}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1117;--page:#151b23;--border:#2a323d;--text:#e8ecf1;--muted:#a3adba;--faint:#7c8693;--accent:#7b93f0;--accent-soft:#26314f;--track:#222a35;--good:#57c26b;--warn:#f0a040;--crit:#ff6b6b;}}
+:root[data-theme="dark"]{--bg:#0d1117;--page:#151b23;--border:#2a323d;--text:#e8ecf1;--muted:#a3adba;--faint:#7c8693;--accent:#7b93f0;--accent-soft:#26314f;--track:#222a35;--good:#57c26b;--warn:#f0a040;--crit:#ff6b6b;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+.note{max-width:900px;margin:20px auto 0;padding:0 16px;color:var(--muted);font-size:13px}
+.page{max-width:900px;margin:12px auto 40px;background:var(--page);border:1px solid var(--border);border-radius:14px;padding:28px 28px 22px}
+@media (max-width:600px){.page{padding:20px 16px;border-radius:0;border-left:0;border-right:0}}
+header{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:18px}
+h1{font-size:22px;margin:0}
+.meta{color:var(--muted);font-size:13px;text-align:right;align-self:flex-end}
+@media (max-width:600px){.meta{text-align:left}}
+h2{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin:24px 0 10px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.kpi{border:1px solid var(--border);border-radius:10px;padding:12px}
+.kpi span{display:block;color:var(--muted);font-size:12px}
+.kpi b{display:block;font-size:21px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.kpi small{display:block;color:var(--muted);font-size:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+@media (max-width:760px){.grid2{grid-template-columns:1fr}}
+.vbars{display:grid;grid-template-columns:96px 1fr 104px;align-items:center;gap:8px 10px;font-size:14px}
+.bar{position:relative;height:12px;background:var(--track);border-radius:4px}
+.bar i{position:absolute;left:0;top:0;bottom:0;background:var(--accent);border-radius:0 4px 4px 0}
+.bar u{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--text);border-radius:1px}
+.num{font-variant-numeric:tabular-nums;text-align:right;color:var(--muted)}
+.num b{color:var(--text);font-weight:600}
+.legend{color:var(--muted);font-size:12px;margin-top:8px}
+.legend .sw{display:inline-block;width:10px;height:10px;background:var(--accent);border-radius:2px;vertical-align:-1px;margin-right:4px}
+.legend .tk{display:inline-block;width:2px;height:12px;background:var(--text);vertical-align:-2px;margin:0 4px 0 10px}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+th{color:var(--muted);font-weight:500;font-size:12px;text-align:right;border-bottom:1px solid var(--border);padding:6px 6px;white-space:nowrap}
+th:first-child,td:first-child,th.l,td.l{text-align:left}
+td{text-align:right;padding:7px 6px;border-bottom:1px solid var(--border);white-space:nowrap}
+td.sub{color:var(--muted);font-size:13px}
+tr.total td{font-weight:600;border-bottom:0}
+.tag{font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.tag.crit{color:var(--crit)} .tag.warn{color:var(--warn)} .tag.good{color:var(--good)}
+.tag.crit:before{content:"✕ "} .tag.warn:before{content:"! "} .tag.good:before{content:"✓ "}
+.actions{counter-reset:a;list-style:none;padding:0;margin:0}
+.actions li{counter-increment:a;padding:8px 0 8px 34px;position:relative;border-bottom:1px solid var(--border);font-size:14px}
+.actions li:before{content:counter(a);position:absolute;left:0;top:8px;width:22px;height:22px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-size:12px;font-weight:700;display:grid;place-items:center}
+.actions em{color:var(--muted);font-style:normal;font-size:13px}
+.how{background:var(--accent-soft);border-radius:12px;padding:14px 16px;margin-top:22px;font-size:14px}
+.how b{display:block;margin-bottom:4px}
+.pipe{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px;font-size:13px}
+.pipe span{background:var(--page);border:1px solid var(--border);border-radius:8px;padding:4px 8px}
+footer{color:var(--faint);font-size:12px;margin-top:18px;border-top:1px solid var(--border);padding-top:10px}
+footer a{color:var(--accent)}
+@media print{body{background:#fff}.note{display:none}.page{border:0;margin:0;max-width:none}}
+</style>
+</head>
+<body>
+<p class="note">Sample work by Shubham Sinha. The fund, its companies and every number are synthetic.</p>
+
+<div class="page">
+<header>
+  <div>
+    <h1>Quarterly Investor Report</h1>
+    <div style="color:var(--muted);font-size:14px">Fund I · Category II AIF · ₹250 Cr commitments · Year 3 of 7</div>
+  </div>
+  <div class="meta">Quarter ended 30 Sep 2026<br>Prepared 8 Oct 2026 · Auto-generated</div>
+</header>
+
+<div class="kpis">
+  <div class="kpi"><span>Capital called</span><b>₹162 Cr</b><small>64.8% of commitments</small></div>
+  <div class="kpi"><span>Distributed</span><b>₹38 Cr</b><small>DPI 0.23x</small></div>
+  <div class="kpi"><span>Net asset value</span><b>₹171 Cr</b><small>Incl. ₹8 Cr cash</small></div>
+  <div class="kpi"><span>TVPI</span><b>1.29x</b><small>(NAV + distributions) ÷ called</small></div>
+  <div class="kpi"><span>Net IRR</span><b>16.2%</b><small>After fees and expenses</small></div>
+</div>
+
+<div class="grid2">
+  <section>
+    <h2>Value vs. cost by investment</h2>
+    <div class="vbars" id="vbars"></div>
+    <div class="legend"><span class="sw"></span>Current value<span class="tk"></span>Amount invested · ₹ Cr</div>
+  </section>
+  <section>
+    <h2>Capital account</h2>
+    <table>
+      <thead><tr><th>₹ Cr</th><th>This quarter</th><th>Since start</th></tr></thead>
+      <tbody>
+        <tr><td>Commitments</td><td>–</td><td>250.0</td></tr>
+        <tr><td>Capital called</td><td>18.0</td><td>162.0</td></tr>
+        <tr><td class="sub">of which invested</td><td class="sub">16.5</td><td class="sub">150.0</td></tr>
+        <tr><td class="sub">of which fees and expenses</td><td class="sub">1.5</td><td class="sub">12.0</td></tr>
+        <tr><td>Distributions</td><td>2.1</td><td>38.0</td></tr>
+        <tr class="total"><td>Uncalled commitments</td><td></td><td>88.0</td></tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+
+<h2>Portfolio</h2>
+<div class="scroll">
+<table>
+  <thead><tr><th>Investment</th><th class="l">Sector</th><th class="l">Instrument</th><th>Invested</th><th>Value</th><th>MOIC</th><th class="l">Status</th></tr></thead>
+  <tbody id="port"></tbody>
+</table>
+</div>
+
+<h2>Covenant monitor · debt investments</h2>
+<div class="scroll">
+<table>
+  <thead><tr><th>Company</th><th class="l">Covenant</th><th>Limit</th><th>Actual</th><th>Last quarter</th><th class="l">Status</th></tr></thead>
+  <tbody>
+    <tr><td>Company C</td><td class="l">Net debt ÷ EBITDA</td><td>≤ 3.5x</td><td>2.8x</td><td>2.9x</td><td class="l"><span class="tag good">Within limit</span></td></tr>
+    <tr><td>Company C</td><td class="l">Interest cover</td><td>≥ 2.0x</td><td>2.6x</td><td>2.5x</td><td class="l"><span class="tag good">Within limit</span></td></tr>
+    <tr><td>Company E</td><td class="l">Net debt ÷ EBITDA</td><td>≤ 3.5x</td><td>3.3x</td><td>3.0x</td><td class="l"><span class="tag warn">Within 10% of limit</span></td></tr>
+    <tr><td>Company E</td><td class="l">Debt service cover</td><td>≥ 1.25x</td><td>1.15x</td><td>1.31x</td><td class="l"><span class="tag crit">Breached</span></td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="grid2">
+  <section>
+    <h2>Compliance calendar</h2>
+    <table>
+      <tbody>
+        <tr><td>Quarterly report to SEBI</td><td class="l"><span class="tag good">Filed 7 Oct</span></td></tr>
+        <tr><td>Half-yearly independent valuation</td><td class="l"><span class="tag good">Received 5 Oct</span></td></tr>
+        <tr><td>Investor statements, Q2</td><td class="l"><span class="tag good">Sent 8 Oct</span></td></tr>
+        <tr><td>Drawdown notice, Q3</td><td class="l"><span class="tag warn">Due 15 Nov</span></td></tr>
+        <tr><td>Annual compliance audit</td><td class="l"><span class="tag warn">Due 31 Dec</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+  <section>
+    <h2>Actions for the investment team</h2>
+    <ol class="actions">
+      <li>Company E: call management on the debt-service breach and review the cure options in the loan terms. <em>Deal lead · by 20 Oct</em></li>
+      <li>Company D: valuation 16% below cost. Prepare a recovery plan for the next investment committee. <em>Deal lead · Nov IC</em></li>
+      <li>Issue the Q3 drawdown notice for ₹15 Cr to fund the Company H pipeline deal. <em>Operations · by 15 Nov</em></li>
+    </ol>
+  </section>
+</div>
+
+<div class="how">
+  <b>How this page is produced</b>
+  It is generated from the fund's accounting ledger, the valuation report and each company's quarterly figures, with no manual spreadsheet work. Covenants and compliance dates are checked automatically every quarter, so a breach or a missed deadline is flagged the day the numbers arrive.
+  <div class="pipe"><span>Fund ledger</span>→<span>Valuations and company figures</span>→<span>Python checks</span>→<span>This report</span></div>
+</div>
+
+<footer>
+  Illustrative sample with a synthetic fund, synthetic companies and synthetic data. Not investment advice.
+  Prepared by Shubham Sinha · <a href="https://shubhamsinha1107.github.io/">shubhamsinha1107.github.io</a>
+</footer>
+</div>
+
+<script>
+const H=[
+ ["Company A","Consumer brands","Equity",28,41.0,"good","On track"],
+ ["Company B","B2B software","Pref. shares",22,30.5,"good","On track"],
+ ["Company C","Lending (NBFC)","Debentures",25,25.8,"good","Paying"],
+ ["Company D","Healthcare","Equity",18,15.2,"warn","Watch"],
+ ["Company E","Logistics","Debentures",20,19.0,"crit","Breach"],
+ ["Company F","Specialty chemicals","Equity",25,31.5,"good","On track"],
+];
+const max=45, V=document.getElementById('vbars');
+H.forEach(([n,,,c,v])=>{const m=(v/c).toFixed(2), tip=`${n}: value ₹${v.toFixed(1)} Cr, invested ₹${c} Cr, ${m}x`;
+ V.insertAdjacentHTML('beforeend',`<div>${n}</div><div class="bar" title="${tip}" role="img" aria-label="${tip}"><i style="width:${v/max*100}%"></i><u style="left:calc(${c/max*100}% - 1px)"></u></div><div class="num"><b>${v.toFixed(1)}</b> / ${c.toFixed(1)}</div>`)});
+let ti=0,tv=0;
+document.getElementById('port').innerHTML=H.map(([n,s,ins,c,v,k,st])=>{ti+=c;tv+=v;return `<tr><td>${n}</td><td class="l">${s}</td><td class="l">${ins}</td><td>${c.toFixed(1)}</td><td>${v.toFixed(1)}</td><td>${(v/c).toFixed(2)}x</td><td class="l"><span class="tag ${k}">${st}</span></td></tr>`}).join('')
+ +`<tr><td>Company G</td><td class="l">Edtech</td><td class="l">Equity</td><td>12.0</td><td>–</td><td>2.50x</td><td class="l"><span class="tag good">Exited</span></td></tr>`
+ +`<tr class="total"><td>Total</td><td></td><td></td><td>${(ti+12).toFixed(1)}</td><td>${tv.toFixed(1)}</td><td>${((tv+38)/(ti+12)).toFixed(2)}x</td><td class="l">Gross</td></tr>`;
+</script>
+</body>
+</html>
