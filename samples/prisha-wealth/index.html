@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Sample Client Review</title>
+<meta name="description" content="An illustrative quarterly client review, built with synthetic data by Shubham Sinha for Prisha Wealth's team.">
+<style>
+:root{--bg:#f6f7f9;--page:#fff;--border:#e3e6ea;--text:#141a22;--muted:#5b6573;--faint:#8a93a0;--accent:#3b5bdb;--accent-soft:#dbe4ff;--track:#eef0f3;--good:#2b8a3e;--warn:#b35c00;--crit:#c92a2a;}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1117;--page:#151b23;--border:#2a323d;--text:#e8ecf1;--muted:#a3adba;--faint:#7c8693;--accent:#7b93f0;--accent-soft:#26314f;--track:#222a35;--good:#57c26b;--warn:#f0a040;--crit:#ff6b6b;}}
+:root[data-theme="dark"]{--bg:#0d1117;--page:#151b23;--border:#2a323d;--text:#e8ecf1;--muted:#a3adba;--faint:#7c8693;--accent:#7b93f0;--accent-soft:#26314f;--track:#222a35;--good:#57c26b;--warn:#f0a040;--crit:#ff6b6b;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+.note{max-width:860px;margin:20px auto 0;padding:0 16px;color:var(--muted);font-size:13px}
+.page{max-width:860px;margin:12px auto 40px;background:var(--page);border:1px solid var(--border);border-radius:14px;padding:28px 28px 22px}
+@media (max-width:600px){.page{padding:20px 16px;border-radius:0;border-left:0;border-right:0}}
+header{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:18px}
+h1{font-size:22px;margin:0}
+.meta{color:var(--muted);font-size:13px;text-align:right;align-self:flex-end}
+@media (max-width:600px){.meta{text-align:left}}
+h2{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin:22px 0 10px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kpi{border:1px solid var(--border);border-radius:10px;padding:12px}
+.kpi span{display:block;color:var(--muted);font-size:12px}
+.kpi b{display:block;font-size:21px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.kpi small{display:block;color:var(--muted);font-size:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+@media (max-width:700px){.grid2{grid-template-columns:1fr}}
+.alloc{display:grid;grid-template-columns:110px 1fr 92px;align-items:center;gap:8px 10px;font-size:14px}
+.bar{position:relative;height:12px;background:var(--track);border-radius:4px}
+.bar i{position:absolute;left:0;top:0;bottom:0;background:var(--accent);border-radius:0 4px 4px 0}
+.bar u{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--text);border-radius:1px}
+.num{font-variant-numeric:tabular-nums;text-align:right;color:var(--muted)}
+.num b{color:var(--text);font-weight:600}
+.legend{color:var(--muted);font-size:12px;margin-top:8px}
+.legend .sw{display:inline-block;width:10px;height:10px;background:var(--accent);border-radius:2px;vertical-align:-1px;margin-right:4px}
+.legend .tk{display:inline-block;width:2px;height:12px;background:var(--text);vertical-align:-2px;margin:0 4px 0 10px}
+table{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+th{color:var(--muted);font-weight:500;font-size:12px;text-align:right;border-bottom:1px solid var(--border);padding:6px 4px}
+th:first-child,td:first-child{text-align:left}
+td{text-align:right;padding:7px 4px;border-bottom:1px solid var(--border)}
+td.pos{color:var(--good)} td.neg{color:var(--crit)}
+.flags{list-style:none;margin:0;padding:0}
+.flags li{display:grid;grid-template-columns:auto 1fr;gap:10px;border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px}
+.tag{font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px;border:1px solid currentColor;white-space:nowrap;height:fit-content}
+.tag.crit{color:var(--crit)} .tag.warn{color:var(--warn)} .tag.good{color:var(--good)}
+.flags b{display:block} .flags span{color:var(--muted);font-size:14px}
+.actions{counter-reset:a;list-style:none;padding:0;margin:0}
+.actions li{counter-increment:a;padding:8px 0 8px 34px;position:relative;border-bottom:1px solid var(--border);font-size:14px}
+.actions li:before{content:counter(a);position:absolute;left:0;top:8px;width:22px;height:22px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-size:12px;font-weight:700;display:grid;place-items:center}
+.actions em{color:var(--muted);font-style:normal;font-size:13px}
+.how{background:var(--accent-soft);border-radius:12px;padding:14px 16px;margin-top:22px;font-size:14px}
+.how b{display:block;margin-bottom:4px}
+.pipe{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px;font-size:13px}
+.pipe span{background:var(--page);border:1px solid var(--border);border-radius:8px;padding:4px 8px}
+footer{color:var(--faint);font-size:12px;margin-top:18px;border-top:1px solid var(--border);padding-top:10px}
+footer a{color:var(--accent)}
+@media print{body{background:#fff}.note{display:none}.page{border:0;margin:0;max-width:none}}
+</style>
+</head>
+<body>
+<p class="note">Sample work prepared independently by Shubham Sinha for Prisha Wealth's team. The client and every number are synthetic. Not affiliated with or endorsed by Prisha Wealth.</p>
+
+<div class="page">
+<header>
+  <div>
+    <h1>Quarterly Portfolio Review</h1>
+    <div style="color:var(--muted);font-size:14px">Client A · Family portfolio · Fee-only advisory</div>
+  </div>
+  <div class="meta">Quarter ended 30 Sep 2026<br>Prepared 3 Oct 2026 · Auto-generated</div>
+</header>
+
+<div class="kpis">
+  <div class="kpi"><span>Portfolio value</span><b>₹12.40 Cr</b><small>+₹37.3 L this quarter</small></div>
+  <div class="kpi"><span>Quarter return</span><b>3.1%</b><small>Benchmark 2.6%</small></div>
+  <div class="kpi"><span>XIRR since start</span><b>14.6%</b><small>Started Apr 2021</small></div>
+  <div class="kpi"><span>Open flags</span><b>4</b><small>1 needs action this month</small></div>
+</div>
+
+<div class="grid2">
+  <section>
+    <h2>Allocation vs. agreed plan</h2>
+    <div class="alloc" id="alloc"></div>
+    <div class="legend"><span class="sw"></span>Actual<span class="tk"></span>Target in the investment plan</div>
+  </section>
+  <section>
+    <h2>Returns vs. benchmark</h2>
+    <table>
+      <thead><tr><th>Period</th><th>Portfolio</th><th>Benchmark</th><th>Difference</th></tr></thead>
+      <tbody id="perf"></tbody>
+    </table>
+    <div class="legend">Benchmark: 55% Nifty 500 TRI, 30% CRISIL Composite Bond, 10% domestic gold, 5% liquid, matching the plan.</div>
+  </section>
+</div>
+
+<h2>Flags this quarter</h2>
+<ul class="flags">
+  <li><span class="tag crit">Action</span><div><b>Equity is 6.8 points above the plan</b><span>The equity rally pushed equity to 61.8% against a 55% target, beyond the ±5-point band. Moving ₹84 L to debt, gold and liquid restores the plan.</span></div></li>
+  <li><span class="tag warn">Review</span><div><b>Two equity funds overlap by 58%</b><span>Flexi-cap Fund A and Large-cap Fund B hold mostly the same stocks, so the client pays two expense ratios for one exposure. Consider consolidating.</span></div></li>
+  <li><span class="tag warn">Review</span><div><b>18% of the debt book is rated below AA</b><span>One credit-risk fund holds ₹55 L. The plan allows 10% at most below AA.</span></div></li>
+  <li><span class="tag good">Opportunity</span><div><b>₹85,000 of the tax-free LTCG allowance is unused</b><span>₹40,000 of the ₹1.25 L annual equity LTCG exemption has been used this year. Harvest the rest before 31 Mar to reset cost bases at no tax.</span></div></li>
+</ul>
+
+<h2>Agreed next steps</h2>
+<ol class="actions">
+  <li>Rebalance ₹84 L from equity: ₹67 L to debt, ₹14 L to gold, ₹3 L to liquid. <em>Adviser · by 15 Oct</em></li>
+  <li>Switch from Large-cap Fund B into the existing index fund, using exit-load-free units first. <em>Adviser · by 31 Oct</em></li>
+  <li>Cut the credit-risk fund to the plan's 10% limit. <em>Adviser · with step 1</em></li>
+  <li>Book ₹85,000 of long-term gains and buy back the same day. <em>Client approval · by Feb 2027</em></li>
+  <li>Update the nominee on two folios and renew one SIP ending in November. <em>Client · by 30 Nov</em></li>
+</ol>
+
+<div class="how">
+  <b>How this page is produced</b>
+  It is generated from the client's consolidated account statement and daily NAVs, with no manual spreadsheet work. The same script produces it for every client in a few minutes, and the flags come from rules in each client's investment plan.
+  <div class="pipe"><span>CAS statement</span>→<span>NAVs and benchmarks</span>→<span>Python rules engine</span>→<span>This review</span></div>
+</div>
+
+<footer>
+  Illustrative sample with a synthetic client and synthetic data. Fund names are generic placeholders. Not investment advice.
+  Prepared by Shubham Sinha · <a href="https://shubhamsinha1107.github.io/">shubhamsinha1107.github.io</a>
+</footer>
+</div>
+
+<script>
+const alloc=[["Equity",61.8,55,7.66],["Debt",24.6,30,3.05],["Gold",8.9,10,1.10],["Cash / liquid",4.7,5,0.59]];
+const max=70, A=document.getElementById('alloc');
+alloc.forEach(([n,a,t,cr])=>{
+  const d=(a-t).toFixed(1), tip=`${n}: ${a}% actual (₹${cr.toFixed(2)} Cr), ${t}% target, ${d>0?'+':''}${d} pts`;
+  A.insertAdjacentHTML('beforeend',`<div>${n}</div><div class="bar" title="${tip}" role="img" aria-label="${tip}"><i style="width:${a/max*100}%"></i><u style="left:calc(${t/max*100}% - 1px)"></u></div><div class="num"><b>${a}%</b> / ${t}%</div>`);
+});
+const perf=[["Quarter",3.1,2.6],["Financial year to date",8.4,7.9],["1 year",13.2,12.1],["3 years, annualised",15.0,14.2]];
+document.getElementById('perf').innerHTML=perf.map(([p,x,b])=>{const d=(x-b).toFixed(1);return `<tr><td>${p}</td><td>${x.toFixed(1)}%</td><td>${b.toFixed(1)}%</td><td class="${d>=0?'pos':'neg'}">${d>=0?'+':''}${d} pts</td></tr>`}).join('');
+</script>
+</body>
+</html>
