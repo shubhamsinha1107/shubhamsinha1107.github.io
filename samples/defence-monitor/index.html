@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Defence Portfolio Monitor</title>
+<meta name="description" content="How I would run portfolio monitoring for a defence-focused fund: an illustrative monthly monitor with synthetic data.">
+<style>
+:root{--bg:#f6f7f9;--page:#fff;--border:#e3e6ea;--text:#141a22;--muted:#5b6573;--faint:#8a93a0;--accent:#3b5bdb;--accent-soft:#dbe4ff;--band:#a5b8f3;--track:#eef0f3;--good:#2b8a3e;--warn:#b35c00;--crit:#c92a2a;}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1117;--page:#151b23;--border:#2a323d;--text:#e8ecf1;--muted:#a3adba;--faint:#7c8693;--accent:#7b93f0;--accent-soft:#26314f;--band:#34437a;--track:#222a35;--good:#57c26b;--warn:#f0a040;--crit:#ff6b6b;}}
+:root[data-theme="dark"]{--bg:#0d1117;--page:#151b23;--border:#2a323d;--text:#e8ecf1;--muted:#a3adba;--faint:#7c8693;--accent:#7b93f0;--accent-soft:#26314f;--band:#34437a;--track:#222a35;--good:#57c26b;--warn:#f0a040;--crit:#ff6b6b;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+.note{max-width:900px;margin:20px auto 0;padding:0 16px;color:var(--muted);font-size:13px}
+.page{max-width:900px;margin:12px auto 40px;background:var(--page);border:1px solid var(--border);border-radius:14px;padding:28px 28px 22px}
+@media (max-width:600px){.page{padding:20px 16px;border-radius:0;border-left:0;border-right:0}}
+header{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:18px}
+h1{font-size:22px;margin:0}
+.sub{color:var(--muted);font-size:14px}
+.meta{color:var(--muted);font-size:13px;text-align:right;align-self:flex-end}
+@media (max-width:600px){.meta{text-align:left}}
+h2{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin:24px 0 10px}
+p{margin:0 0 10px}
+.lead{font-size:16px}
+.why{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.why div{border:1px solid var(--border);border-radius:10px;padding:12px;font-size:14px}
+.why b{display:block;margin-bottom:2px}
+.why span{color:var(--muted)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kpi{border:1px solid var(--border);border-radius:10px;padding:12px}
+.kpi span{display:block;color:var(--muted);font-size:12px}
+.kpi b{display:block;font-size:21px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.kpi small{display:block;color:var(--muted);font-size:12px}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+th{color:var(--muted);font-weight:500;font-size:12px;text-align:right;border-bottom:1px solid var(--border);padding:6px 6px;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+td{text-align:right;padding:8px 6px;border-bottom:1px solid var(--border);white-space:nowrap}
+td small{display:block;color:var(--muted);font-size:12px;white-space:normal}
+td.l{text-align:left;white-space:normal;min-width:150px}
+.st{font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.st.good{color:var(--good)} .st.warn{color:var(--warn)} .st.crit{color:var(--crit)}
+.st::before{margin-right:4px}
+.st.good::before{content:"✓"} .st.warn::before{content:"!"} .st.crit::before{content:"▲"}
+td.bad{color:var(--crit);font-weight:600}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media (max-width:760px){.grid2{grid-template-columns:1fr}}
+.chart{display:grid;gap:8px 10px;align-items:center;font-size:14px}
+.funnel{grid-template-columns:118px 1fr 74px}
+.valn{grid-template-columns:96px 1fr 64px}
+.bar{position:relative;height:14px;background:var(--track);border-radius:4px;cursor:default}
+.bar i{position:absolute;left:0;top:0;bottom:0;background:var(--accent);border-radius:0 4px 4px 0}
+.bar .w{position:absolute;left:0;top:0;bottom:0;background:var(--band);border-radius:0 4px 4px 0}
+.bar .rng{position:absolute;top:0;bottom:0;background:var(--band);border-radius:4px}
+.bar .dot{position:absolute;top:50%;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 2px var(--page)}
+.bar .dot.out{background:var(--warn)}
+.bar .inv{position:absolute;top:-4px;bottom:-4px;width:2px;margin-left:-1px;background:var(--text);border-radius:1px}
+.num{font-variant-numeric:tabular-nums;text-align:right;color:var(--muted)}
+.num b{color:var(--text);font-weight:600}
+.legend{color:var(--muted);font-size:12px;margin-top:10px;display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center}
+.legend i{display:inline-block;vertical-align:-1px;margin-right:5px}
+.sw{width:10px;height:10px;border-radius:2px;background:var(--accent)}
+.sw.b{background:var(--band)}
+.sd{width:10px;height:10px;border-radius:50%;background:var(--accent)}
+.sd.o{background:var(--warn)}
+.tk{width:2px;height:12px;background:var(--text)}
+.flags{list-style:none;margin:0;padding:0}
+.flags li{display:grid;grid-template-columns:auto 1fr;gap:10px;border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px}
+.flags .st{height:fit-content}
+.flags b{display:block} .flags span.d{color:var(--muted);font-size:14px}
+.flags em{display:block;font-style:normal;font-size:13px;margin-top:3px}
+.plan{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.plan div{border:1px solid var(--border);border-radius:10px;padding:12px;font-size:14px}
+.plan b{display:block;color:var(--accent);font-size:13px}
+.plan span{color:var(--muted)}
+.how{background:var(--accent-soft);border-radius:12px;padding:14px 16px;margin-top:24px;font-size:14px}
+.how b{display:block;margin-bottom:4px}
+.pipe{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px;font-size:13px}
+.pipe span{background:var(--page);border:1px solid var(--border);border-radius:8px;padding:4px 8px}
+.method{color:var(--muted);font-size:13px;margin-top:8px}
+footer{color:var(--faint);font-size:12px;margin-top:18px;border-top:1px solid var(--border);padding-top:10px}
+footer a{color:var(--accent)}
+#tip{position:fixed;pointer-events:none;background:var(--text);color:var(--page);font-size:12px;line-height:1.4;padding:6px 8px;border-radius:6px;max-width:240px;opacity:0;transition:opacity .1s;z-index:9}
+@media print{body{background:#fff}.note{display:none}.page{border:0;margin:0;max-width:none}}
+</style>
+</head>
+<body>
+<p class="note">Sample work by Shubham Sinha. Every company and number below is synthetic.</p>
+
+<div class="page">
+<header>
+  <div>
+    <h1>Defence Portfolio Monitor</h1>
+    <div class="sub">How I would track a defence-focused fund's holdings · Illustrative fund with five companies</div>
+  </div>
+  <div class="meta">Month ended 31 Oct 2026<br>Prepared 21 Nov 2026</div>
+</header>
+
+<p class="lead">Defence companies don't behave like the rest of a portfolio. Revenue arrives in large, late contracts from a handful of buyers, so the usual quarterly P&amp;L review spots problems too late. This monitor tracks the leading signals instead: order book, procurement pipeline, receivables and valuation, every month.</p>
+
+<h2>What makes defence monitoring different</h2>
+<div class="why">
+  <div><b>Long procurement cycle</b><span>From Acceptance of Necessity to contract can take years. Track each opportunity by stage, not just the order book.</span></div>
+  <div><b>Few buyers</b><span>Ministry of Defence, DPSUs and a few primes. Customer concentration and payment delays are the main risks.</span></div>
+  <div><b>Policy as a driver</b><span>Indigenisation lists, DAP categories and export authorisations can add or remove whole markets.</span></div>
+  <div><b>Hard to value</b><span>Unlisted stakes need a regular cross-check against listed defence companies to keep marks credible with investors.</span></div>
+</div>
+
+<h2>Fund snapshot</h2>
+<div class="kpis">
+  <div class="kpi"><span>Invested → current mark</span><b>₹220 → 291 Cr</b><small>1.32x gross MOIC</small></div>
+  <div class="kpi"><span>Portfolio order book</span><b>₹1,371 Cr</b><small>2.0x trailing revenue</small></div>
+  <div class="kpi"><span>Weighted pipeline</span><b>₹687 Cr</b><small>Probability-weighted by stage</small></div>
+  <div class="kpi"><span>Open flags</span><b>4</b><small>1 needs action this month</small></div>
+</div>
+
+<h2>Portfolio companies</h2>
+<div class="scroll">
+<table>
+  <thead><tr><th>Company</th><th>Stake</th><th>Order book</th><th>Book ÷ revenue</th><th>Top customer</th><th>Receivable days</th><th>Status</th></tr></thead>
+  <tbody>
+    <tr><td class="l">Company A<small>Radar and electronic subsystems</small></td><td>26%</td><td>₹410 Cr</td><td>2.3x</td><td>45%</td><td>120</td><td><span class="st good">On track</span></td></tr>
+    <tr><td class="l">Company B<small>Drones and UAV systems</small></td><td>18%</td><td>₹96 Cr</td><td>1.4x</td><td>58%</td><td>95</td><td><span class="st warn">Watch</span></td></tr>
+    <tr><td class="l">Company C<small>Precision aerostructures</small></td><td>22%</td><td>₹260 Cr</td><td>1.7x</td><td class="bad">62%</td><td>140</td><td><span class="st warn">Watch</span></td></tr>
+    <tr><td class="l">Company D<small>Ammunition components</small></td><td>30%</td><td>₹520 Cr</td><td>2.5x</td><td>52%</td><td class="bad">210</td><td><span class="st crit">Action</span></td></tr>
+    <tr><td class="l">Company E<small>Simulation and training software</small></td><td>15%</td><td>₹85 Cr</td><td>1.4x</td><td>35%</td><td>80</td><td><span class="st good">On track</span></td></tr>
+  </tbody>
+</table>
+</div>
+<div class="method">Red values breach the fund's monitoring limits: top customer above 60% of the order book, receivables above 150 days.</div>
+
+<div class="grid2">
+  <section>
+    <h2>Pipeline by procurement stage</h2>
+    <div class="chart funnel" id="funnel"></div>
+    <div class="legend"><span><i class="sw b"></i>Total value</span><span><i class="sw"></i>Probability-weighted</span></div>
+    <div class="method">Stage weights: AoN 10%, RFP 20%, trials 35%, L1 70%, signed 100%. All five companies combined, ₹ Cr.</div>
+  </section>
+  <section>
+    <h2>Valuation cross-check</h2>
+    <div class="chart valn" id="valn"></div>
+    <div class="legend"><span><i class="sw b"></i>Peer-implied range</span><span><i class="sd"></i>Current mark</span><span><i class="sd o"></i>Mark outside range</span><span><i class="tk"></i>Invested</span></div>
+    <div class="method">Fund's stake value, ₹ Cr. Range from listed defence peers' EV/EBITDA and EV/Sales, less a 20–30% discount for size and illiquidity, then checked against the last round price. Peer set: HAL, BEL, BDL, Data Patterns, Astra Microwave, Paras Defence, Zen Technologies, MTAR. Multiples here are illustrative, not current market data.</div>
+  </section>
+</div>
+
+<h2>Flags this month</h2>
+<ul class="flags">
+  <li><span class="st crit">Action</span><div><b>Company D: receivables at 210 days, against a 150-day limit</b><span class="d">₹38 Cr is held up with one DPSU, and the working-capital line is 85% drawn. A further payment slip would squeeze delivery on the ₹520 Cr order book.</span><em>Next step: management call this week; check which payment milestones are pending and whether bank guarantees are tying up limits.</em></div></li>
+  <li><span class="st warn">Review</span><div><b>Company B: mark of ₹48 Cr sits above the peer range of ₹30–44 Cr</b><span class="d">The gap rests on a ₹48 Cr export order that is still waiting for export authorisation.</span><em>Next step: hold the mark at ₹44 Cr until authorisation arrives, or document the premium for the valuation committee.</em></div></li>
+  <li><span class="st warn">Review</span><div><b>Company C: 62% of the order book comes from one customer</b><span class="d">User trials for its next programme have slipped two quarters, which leaves the concentration in place for longer.</span><em>Next step: track the revised trial date and the two RFPs that would bring a second customer.</em></div></li>
+  <li><span class="st good">Opportunity</span><div><b>Company A: a subsystem it makes was added to an indigenisation list</b><span class="d">Imports of the item will be phased out, opening an estimated ₹180 Cr of RFPs over three years where Company A is one of two domestic suppliers.</span><em>Next step: update the pipeline and capacity plan; consider whether the fund's follow-on reserve should be earmarked.</em></div></li>
+</ul>
+
+<h2>How I would set this up in the first 30 days</h2>
+<div class="plan">
+  <div><b>Week 1</b><span>Agree one monthly data request with each company: order book, pipeline by stage, receivables, cash and covenants.</span></div>
+  <div><b>Week 2</b><span>Build the order book and pipeline tracker, plus alerts for procurement news that touches portfolio companies.</span></div>
+  <div><b>Week 3</b><span>Set up the valuation cross-check with the listed peer set, so quarterly marks come with a documented range.</span></div>
+  <div><b>Week 4</b><span>Produce the first monthly monitor, and a quarterly investor pack drawn from the same data.</span></div>
+</div>
+
+<div class="how">
+  <b>How this page is produced</b>
+  Companies send one standard monthly file. A Python script combines it with listed-peer data and procurement announcements, applies the fund's limits, and writes this page and the investor pack. Once set up, each month's monitor takes minutes, not days.
+  <div class="pipe"><span>Company monthly files</span>→<span>Peer prices and procurement news</span>→<span>Python rules and limits</span>→<span>Monitor and investor pack</span></div>
+</div>
+
+<footer>
+  Illustrative sample. Companies, figures, valuation multiples and events are synthetic; listed peers are named only to show the method. Not investment advice.
+  Prepared by Shubham Sinha · <a href="https://shubhamsinha1107.github.io/">shubhamsinha1107.github.io</a> · Another example: <a href="../fund-report/">quarterly investor report</a>
+</footer>
+</div>
+<div id="tip" role="tooltip"></div>
+
+<script>
+const tip=document.getElementById('tip');
+function hover(el,text){
+  el.setAttribute('aria-label',text);el.setAttribute('role','img');el.tabIndex=0;
+  const show=e=>{tip.textContent=text;tip.style.opacity=1;move(e)};
+  const move=e=>{if(!e||e.clientX===undefined){const r=el.getBoundingClientRect();tip.style.left=r.left+'px';tip.style.top=(r.bottom+8)+'px';return}
+    const x=Math.min(e.clientX+12,innerWidth-tip.offsetWidth-8);tip.style.left=x+'px';tip.style.top=(e.clientY+14)+'px'};
+  el.addEventListener('mouseenter',show);el.addEventListener('mousemove',move);el.addEventListener('mouseleave',()=>tip.style.opacity=0);
+  el.addEventListener('focus',()=>show());el.addEventListener('blur',()=>tip.style.opacity=0);
+}
+// Pipeline: [stage, total ₹ Cr, weight]
+const stages=[["AoN accorded",1240,.10],["RFP issued",690,.20],["Trials",410,.35],["L1 / negotiation",230,.70],["Signed this qtr",120,1]];
+const F=document.getElementById('funnel'), fmax=1240;
+stages.forEach(([s,v,w])=>{
+  const wv=Math.round(v*w*10)/10;
+  F.insertAdjacentHTML('beforeend',`<div>${s}</div><div class="bar"><span class="w" style="width:${v/fmax*100}%"></span><i style="width:${wv/fmax*100}%"></i></div><div class="num"><b>${v.toLocaleString('en-IN')}</b></div>`);
+  hover(F.lastElementChild.previousElementSibling,`${s}: ₹${v.toLocaleString('en-IN')} Cr total; weighted at ${Math.round(w*100)}% = ₹${wv.toLocaleString('en-IN')} Cr`);
+});
+// Valuation: [company, invested, mark, low, high]
+const vals=[["Company A",60,92,80,118],["Company B",35,48,30,44],["Company C",45,46,40,58],["Company D",55,74,66,95],["Company E",25,31,27,40]];
+const V=document.getElementById('valn'), vmax=130;
+vals.forEach(([c,inv,m,lo,hi])=>{
+  const out=m<lo||m>hi;
+  V.insertAdjacentHTML('beforeend',`<div>${c}</div><div class="bar"><span class="rng" style="left:${lo/vmax*100}%;width:${(hi-lo)/vmax*100}%"></span><span class="inv" style="left:${inv/vmax*100}%"></span><span class="dot${out?' out':''}" style="left:${m/vmax*100}%"></span></div><div class="num"><b>${m}</b></div>`);
+  hover(V.lastElementChild.previousElementSibling,`${c}: mark ₹${m} Cr; peer range ₹${lo}–${hi} Cr; invested ₹${inv} Cr${out?' — mark is outside the range':''}`);
+});
+</script>
+</body>
+</html>
