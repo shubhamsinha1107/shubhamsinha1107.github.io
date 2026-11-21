@@ -58,6 +58,14 @@ td:nth-child(2){color:var(--muted);min-width:160px}
 td:nth-child(3){min-width:190px}
 .f{display:inline-block;font-size:11px;font-weight:600;padding:1px 7px;border-radius:999px;border:1px solid currentColor;margin-bottom:2px;white-space:nowrap}
 .f.m{color:var(--accent)} .f.q{color:var(--good)} .f.e{color:var(--warn)}
+@media (max-width:600px){
+  thead{display:none}
+  table,tbody,tr,td{display:block;width:100%}
+  tr{border-bottom:1px solid var(--border);padding:10px 0}
+  td{border:0;padding:2px 0;min-width:0!important}
+  td:nth-child(2)::before{content:"Source: ";color:var(--faint)}
+  td:nth-child(3)::before{content:"Flag if: ";color:var(--faint)}
+}
 .legend{color:var(--muted);font-size:12px;margin-top:8px;display:flex;flex-wrap:wrap;gap:4px 12px}
 /* questions */
 ol.qs{margin:0;padding:0;list-style:none;counter-reset:q}
@@ -103,7 +111,7 @@ footer a{color:var(--accent)}
 <h2>What makes this stake different</h2>
 <div class="cards">
   <div><b>The parent is also the main partner</b><span>TDTL can share orders, people, plant and suppliers with Texmaco Rail. Value can move between the two through pricing and order allocation.</span><i>Watch: dealings with the parent as a share of TDTL's revenue and costs, and how new defence orders are booked between the two.</i></div>
-  <div><b>Half the money is still to come</b><span>The second tranche is the fund's main lever. Each rupee should go in only once the conditions are met and tranche 1 has been used as planned.</span><i>Watch: use of tranche 1 funds against the plan, and every tranche 2 condition, with its status and date.</i></div>
+  <div><b>The second tranche is still to come</b><span>The second tranche is the fund's main lever. Each rupee should go in only once the conditions are met and tranche 1 has been used as planned.</span><i>Watch: use of tranche 1 funds against the plan, and every tranche 2 condition, with its status and date.</i></div>
   <div><b>The listed parent is a free data feed</b><span>Texmaco Rail must disclose orders, results and material events to the stock exchanges. Those filings often show what's happening at TDTL before the monthly report arrives.</span><i>Watch: a daily alert on parent filings, plus defence-segment figures in its quarterly results.</i></div>
   <div><b>A 30% stake depends on its rights</b><span>Without control, the shareholder agreement is the protection: board seat, veto rights, information rights, anti-dilution and exit terms.</span><i>Watch: a checklist of reserved matters, so no decision that needs the fund's consent slips through.</i></div>
 </div>
